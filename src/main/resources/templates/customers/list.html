@@ -70,10 +70,10 @@
 									<td th:text="${emp.email}"></td>
 									<td th:text="${emp.gender}== '1'?'男':'女'"></td>
 									<td th:text="${emp.departmentName}"></td>
-									<td th:text="${#dates.format(emp.birth,'yyyy-MM-dd HH:mm:ss')}"></td>
+									<td th:text="${#dates.format(emp.birth,'yyyy-MM-dd')}"></td>
 									<td>
-										<button class="btn btn-sm btn-primary">update</button>
-										<button class="btn btn-sm btn-danger">delete</button>
+										<a th:href="@{/modifyEmp(empId=${emp.empId})}" class="btn btn-sm btn-primary">update</a>
+										<a th:href="@{/delEmp(empId=${emp.empId})}" class="btn btn-sm btn-danger">delete</a>
 									</td>
 								</tr>
 							</tbody>
@@ -86,18 +86,18 @@
 		<!-- Bootstrap core JavaScript
     ================================================== -->
 		<!-- Placed at the end of the document so the pages load faster -->
-		<script type="text/javascript" src="../../static/asserts/js/jquery-3.2.1.slim.min.js"></script>
-		<script type="text/javascript" src="../../static/asserts/js/popper.min.js"></script>
-		<script type="text/javascript" src="../../static/asserts/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="/asserts/js/jquery-3.2.1.slim.min.js"></script>
+		<script type="text/javascript" src="/asserts/js/popper.min.js"></script>
+		<script type="text/javascript" src="/asserts/js/bootstrap.min.js"></script>
 
 		<!-- Icons -->
-		<script type="text/javascript" src="../../static/asserts/js/feather.min.js"></script>
+		<script type="text/javascript" src="/asserts/js/feather.min.js"></script>
 		<script>
 			feather.replace()
 		</script>
 
 		<!-- Graphs -->
-		<script type="text/javascript" src="../../static/asserts/js/Chart.min.js"></script>
+		<script type="text/javascript" src="/asserts/js/Chart.min.js"></script>
 		<script>
 			var ctx = document.getElementById("myChart");
 			var myChart = new Chart(ctx, {

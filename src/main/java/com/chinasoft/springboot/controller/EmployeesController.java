@@ -9,10 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.NumberUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.Date;
@@ -42,10 +41,32 @@ public class EmployeesController {
         employeeDao.save(employee);
         return "redirect:/emps";
     }
+    @PostMapping("/modifyEmp")
+    public String modifyEmp(Employee employee, Model model){
+        employeeDao.updateEmpById(employee);
+        return "redirect:/emps";
+    }
     @PostMapping("/checkEmail")
     @ResponseBody
-    public  Boolean checkEmail(@RequestParam("email")String email){
-        return true;
+    public  Boolean checkEmail(@RequestParam("email")String email,@RequestParam("empId")Integer empId){
+        List<Employee> result = employeeDao.findByEmailLike(email,empId);
+        if (!ObjectUtils.isEmpty(result)){
+            return true;
+        }
+        return false;
+    }
+    @GetMapping("/delEmp")
+    public String delEmp(@RequestParam("empId")Integer empId){
+        employeeDao.deleteById(empId);
+        return "redirect:/emps";
+    }
+    @GetMapping("/modifyEmp")
+    public String toModifyEmp(@RequestParam("empId")Integer empId , Model model){
+        Employee employee = employeeDao.getOne(empId);
+        List<Department> departments = departmentDao.findAll();
+        model.addAttribute("depts",departments);
+        model.addAttribute("emp",employee);
+        return "/customers/modifyEmp";
     }
 
 }
