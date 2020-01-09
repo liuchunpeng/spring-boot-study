@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+        <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.chinasoft.springboot.dao.UserDao">
+<select id="findByUserName" resultType="com.chinasoft.springboot.entities.User">
+    select id, user_name userName,pass_word passWord
+    from user
+    <if test="userName != null">
+        where user.user_name = #{userName}
+    </if>
+</select>
+</mapper>

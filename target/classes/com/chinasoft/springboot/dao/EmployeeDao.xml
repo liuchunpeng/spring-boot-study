@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.chinasoft.springboot.dao.EmployeeDao">
+    <resultMap id="ResultBaseMap" type="com.chinasoft.springboot.entities.Employee">
+        <result column="emp_id"  property="empId"></result>
+        <result column="last_name"  property="lastName"></result>
+        <result column="email"  property="email"></result>
+        <result column="gender"  property="gender"></result>
+        <result column="dept_id"  property="deptId"></result>
+        <result column="birth"  property="birth"></result>
+    </resultMap>
+    <insert id="saveEmployee" >
+        insert into employee (last_name,email,gender,dept_id,birth)
+        values (#{lastName},#{email},#{gender},#{deptId},#{birth})
+    </insert>
+
+    <update id="updateEmpById">
+        update employee e set e.last_name = #{lastName},e.email = #{email} ,e.gender = #{gender},e.dept_id = #{deptId},e.birth = #{birth} where e.emp_id=#{empId}
+    </update>
+
+    <delete id="deleteById">
+        delete from employee where emp_id = #{empId}
+    </delete>
+
+    <select id="findUserInfo" resultType="com.chinasoft.springboot.entities.EmployeeInfo">
+        select
+            e.emp_id empId,e.last_name lastName,e.email email,e.gender gender,d.department_name departmentName,e.birth birth
+		from
+		    employee e,  department d
+		where
+		    e.dept_id = d.dept_id
+    </select>
+
+    <select id="findByEmailLike" resultMap="ResultBaseMap">
+        select
+            e.emp_id,e.last_name,e.email,e.gender,e.dept_id,e.birth
+        from
+            employee e
+        where
+            e.email = #{param1}
+            <if test="param2 != null">
+                and e.emp_id &lt;&gt; #{param2}
+            </if>
+
+    </select>
+
+    <select id="getOneEmployee" resultMap="ResultBaseMap">
+        select e.emp_id,e.last_name,e.email,e.gender,e.dept_id,e.birth
+        from employee e
+        where e.emp_id=#{empId}
+    </select>
+</mapper>
