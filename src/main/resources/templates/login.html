@@ -10,7 +10,9 @@
 		<link href="asserts/css/bootstrap.min.css" rel="stylesheet">
 		<!-- Custom styles for this template -->
 		<link href="asserts/css/signin.css" rel="stylesheet">
-		<script th:src="@{/asserts/js/jquery-3.2.1.slim.min.js}"></script>
+		<script th:src="@{/asserts/js/jquery-3.4.1.js}"></script>
+		<script th:src="@{/asserts/js/jquery.cookie.js}"></script>
+		<script th:src="@{/asserts/js/jquery.base64.js}"></script>
 	</head>
 
 	<body class="text-center">
@@ -19,15 +21,15 @@
 			<h1 class="h3 mb-3 font-weight-normal" th:text="#{tip}">Please sign in</h1>
 			<p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
 			<label class="sr-only" th:text="#{username}">Username</label>
-			<input type="text" name="username" class="form-control" th:placeholder="#{username}" placeholder="Username" required="" autofocus="">
+			<input type="text" id="username" name="username" class="form-control" th:placeholder="#{username}" placeholder="Username" required="" autofocus="">
 			<label class="sr-only" th:text="#{password}">Password</label>
-			<input type="password" name="password" class="form-control" th:placeholder="#{password}" placeholder="Password" required="">
+			<input type="password" id="password" name="password" class="form-control" th:placeholder="#{password}" placeholder="Password" required="">
 			<div class="checkbox mb-3">
-				<label>
-          <input type="checkbox" value="remember-me" th:text="#{remember}">
-        </label>
+			<label>
+          		<input id="remember" type="checkbox" value="remember-me" th:text="#{remember}">
+        	</label>
 			</div>
-			<button class="btn btn-lg btn-primary btn-block" type="submit" th:text="#{btn}">Sign in</button>
+			<button class="btn btn-lg btn-primary btn-block" id="login" type="submit" th:text="#{btn}">Sign in</button>
 			<p class="mt-5 mb-3 text-muted" id="date"></p>
 			<a class="btn btn-sm" th:href="@{/login(locale=zh_CN)}">中文</a>
 			<a class="btn btn-sm" th:href="@{/login(locale=en_US)}">English</a>
@@ -37,9 +39,66 @@
 <script>
 
 	$(document).ready(function(){
+		$("#login").click(function(){
+			login();
+		});
+		var aa = $.cookie("pwd");
+
 		var date ='@' + new Date().getFullYear() + '-' + (new Date().getFullYear()+1);
 		$('#date').html(date);
+
+		//判断cookie是否存在，存在就选中复选框，不存在置空  
+		if($.cookie("login_code") == null || $.cookie("login_code") == 0 ){
+			$('#username').val();
+			$('#password').val();
+		}else{
+			$("#remember").attr("checked",true)
+			$('#username').val($.cookie("login_code"));
+			$('#password').val($.base64.decode($.cookie("pwd")));
+
+		}
+
 	});
+
+	//设置cookie  
+	function setCookie(userName,password){
+		var loginCode = userName; //获取用户名信息    
+		var pwd = password; //获取登陆密码信息    
+		  
+		//设置cookie过期时间
+		var date = new Date();
+		date.setTime(date.getTime()+86400*1000);//只能这么写，60表示60秒钟
+		alert("cookie过期时间："+date);
+		$.cookie("login_code",loginCode,{ expires: date,path: '/' });//调用jquery.cookie.js中的方法设置cookie中的用户名    
+		$.cookie("pwd",$.base64.encode(pwd),{ expires: date,path: '/' });//调用jquery.cookie.js中的方法设置cookie中的登陆密码，并使用base64（jquery.base64.js）进行加密
+	}
+
+	//清除所有cookie函数
+	function clearAllCookie() {
+		var date=new Date();
+		date.setTime(date.getTime()-10000);
+		var keys=document.cookie.match(/[^ =;]+(?=\=)/g);
+		console.log("需要删除的cookie名字："+keys);
+		if (keys) {
+			for (var i =  keys.length; i--;)
+				document.cookie=keys[i]+"=0; expire="+date.toGMTString()+"; path=/";
+		}
+	}
+
+	function login() {
+		var userName = $('#username').val();
+		var password =$('#password').val();
+
+		//判断是否选中复选框，如果选中，添加cookie  
+		var remember=$("#remember").is(':checked');
+		if(remember){
+			//添加cookie    
+			setCookie(userName,password);
+		}else{
+			clearAllCookie();
+		}
+	}
+
 
 
 </script>

@@ -5,6 +5,8 @@ import com.chinasoft.springboot.dao.EmployeeDao;
 import com.chinasoft.springboot.entities.Department;
 import com.chinasoft.springboot.entities.Employee;
 import com.chinasoft.springboot.entities.EmployeeInfo;
+import com.chinasoft.springboot.service.DepartmentService;
+import com.chinasoft.springboot.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,35 +23,35 @@ import java.util.stream.Stream;
 @Controller
 public class EmployeesController {
     @Autowired
-    private EmployeeDao employeeDao;
+    private EmployeeService employeeService;
     @Autowired
-    private DepartmentDao departmentDao;
+    private DepartmentService departmentService;
     @GetMapping("/emps")
     public String list(Model model){
-        List<EmployeeInfo> employees = employeeDao.findUserInfo();
+        List<EmployeeInfo> employees = employeeService.findUserInfo();
         model.addAttribute("listEmployee",employees);
         return "/customers/list";
     }
     @GetMapping("/emp")
     public String toAddEmp(Model model){
-        List<Department> departments = departmentDao.findAll();
+        List<Department> departments = departmentService.findAll();
         model.addAttribute("depts",departments);
         return "/customers/addEmp";
     }
     @PostMapping("/emp")
     public String addEmp(Employee employee, Model model){
-        employeeDao.save(employee);
+        employeeService.saveEmployee(employee);
         return "redirect:/emps";
     }
     @PostMapping("/modifyEmp")
     public String modifyEmp(Employee employee, Model model){
-        employeeDao.updateEmpById(employee);
+        employeeService.updateEmpById(employee);
         return "redirect:/emps";
     }
     @PostMapping("/checkEmail")
     @ResponseBody
     public  Boolean checkEmail(@RequestParam("email")String email,@RequestParam("empId")Integer empId){
-        List<Employee> result = employeeDao.findByEmailLike(email,empId);
+        List<Employee> result = employeeService.findByEmailLike(email,empId);
         if (!ObjectUtils.isEmpty(result)){
             return true;
         }
@@ -57,13 +59,13 @@ public class EmployeesController {
     }
     @GetMapping("/delEmp")
     public String delEmp(@RequestParam("empId")Integer empId){
-        employeeDao.deleteById(empId);
+        employeeService.deleteById(empId);
         return "redirect:/emps";
     }
     @GetMapping("/modifyEmp")
     public String toModifyEmp(@RequestParam("empId")Integer empId , Model model){
-        Employee employee = employeeDao.getOne(empId);
-        List<Department> departments = departmentDao.findAll();
+        Employee employee = employeeService.getOneEmployee(empId);
+        List<Department> departments = departmentService.findAll();
         model.addAttribute("depts",departments);
         model.addAttribute("emp",employee);
         return "/customers/modifyEmp";
