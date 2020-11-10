@@ -6,6 +6,7 @@ import com.chinasoft.springboot.service.UserDaoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ public class SignInController {
     public String signIn(@RequestParam("username")String username , @RequestParam("password")String password
             , Model model, HttpSession httpSession){
         User user = userDaoService.findByUserName(username);
-        if (!StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)){
+        if (!ObjectUtils.isEmpty(user) && !StringUtils.isEmpty(username) && !StringUtils.isEmpty(password)){
             if (username.equals(user.getUserName()) && password.equals(user.getPassWord())){
                 httpSession.setAttribute("loginUser",username);
                 return "redirect:/dashboard";
